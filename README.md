@@ -85,10 +85,13 @@ accelerate launch train_dpo_trl.py
 Testsets are using [csebuetnlp/xlsum](https://huggingface.co/datasets/csebuetnlp/xlsum) CHT, JA, KO and EN test subsets.
 
 ### Eval with Rouge2 and Avg length
+1. Select the adapter you want to eval
+```bash
+vim $SUM_ADPT_ROOT/eval/eval_lm_harness.sh
+```
+2. Run eval script
 ```bash
 cd $SUM_ADPT_ROOT/eval
-# Make sure all the setting are correctly
-vim eval_lm_harness.sh
 # start eval
 bash eval_lm_harness.sh
 ```

@@ -3,6 +3,7 @@
 
 BASE_MODEL=Qwen/Qwen2.5-3B-Instruct
 ADAPTER=chenguang-wang/Qwen2.5-3B-Instruct-summary-sft-adapter
+#ADAPTER=chenguang-wang/Qwen2.5-3B-Instruct-summary-dpo-adapter
 WORK_DIR=$(dirname $(realpath $0))
 
 accelerate launch -m lm_eval --model hf \
