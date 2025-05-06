@@ -1,0 +1,39 @@
+task: en_xlsum
+
+dataset_path: csebuetnlp/xlsum
+dataset_name: english
+
+training_split: train
+validation_split: validation
+test_split: test
+
+fewshot_split: train
+
+description: "You are an expert in summarization tasks. You are good at summarizing long texts into concise and accurate summarizations. The text you summarize needs to meet the following three requirements:\n1. Your summarization must be concise and accurately express the meaning of the original text\n2. The language of the summarization must be consistent with the original text\n3. You only need to output the summary, without various polite words and other useless words\n\n"
+doc_to_text: "Summarize the following text: \n{{ text }}"
+doc_to_target: "{{ summary }}"
+target_delimiter: "\n"
+
+output_type: generate_until
+
+metric_list:
+  - metric: !function ../eval_utils.rouge2
+    aggregation: !function ../eval_utils.rouge2_agg
+    higher_is_better: true
+  - metric: !function ../eval_utils.resp_avg_len
+    aggregation: !function ../eval_utils.avg_by_len
+    higher_is_better: false
+
+filter_list:
+  - name: whitespaces
+    filter:
+      - function: remove_whitespace
+      - function: take_first
+
+generation_kwargs:
+  until:
+    - "\n\n"
+  do_sample: false
+
+metadata:
+  version: 1.0

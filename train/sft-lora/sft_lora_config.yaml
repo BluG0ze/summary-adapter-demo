@@ -1,0 +1,56 @@
+model:
+  base_model: "Qwen/Qwen2.5-3B-Instruct"
+
+lora:
+  r: 16
+  target_modules:
+    - "q_proj"
+    - "k_proj" 
+    - "v_proj"
+  lora_alpha: 32
+  use_rslora: True
+  lora_dropout: 0.1
+  bias: "none"
+  task_type: "CAUSAL_LM"
+
+train:
+  output_dir: "./Qwen2.5-3B-Instruct-summary-sft-adapter"
+  do_train: True
+  bf16: True
+  #num_train_epochs=3
+  max_steps: 3000
+  per_device_train_batch_size: 8
+  per_device_eval_batch_size: 8
+  eval_strategy: "steps"
+  eval_steps: 300
+  logging_strategy: "steps"
+  logging_steps: 30
+  save_strategy: "steps"
+  save_steps: 300
+  learning_rate: 2e-5
+  warmup_ratio: 0.2
+  max_length: 4000
+  gradient_checkpointing: True
+  gradient_checkpointing_kwargs:
+    use_reentrant: True
+  packing: True
+  eval_packing: False
+  neftune_noise_alpha: 5
+  completion_only_loss: True
+  label_names:
+    - "labels"
+  fsdp: "full_shard"
+
+data:
+  train:
+    - "../../datasets/xlsum_datasets/chinese_traditional/transformed_train.jsonl"
+    - "../../datasets/xlsum_datasets/english/transformed_train.jsonl"
+    - "../../datasets/xlsum_datasets/japanese/transformed_train.jsonl"
+    - "../../datasets/xlsum_datasets/korean/transformed_train.jsonl"
+  val:
+    - "../../datasets/xlsum_datasets/chinese_traditional/transformed_validation.jsonl"
+    - "../../datasets/xlsum_datasets/english/transformed_validation.jsonl"
+    - "../../datasets/xlsum_datasets/japanese/transformed_validation.jsonl"
+    - "../../datasets/xlsum_datasets/korean/transformed_validation.jsonl"
+
+seed: 1234

@@ -1,0 +1,35 @@
+model:
+  base_model: "Qwen/Qwen2.5-3B-Instruct"
+  sft_lora: "chenguang-wang/Qwen2.5-3B-Instruct-summary-sft-adapter"
+
+train:
+  output_dir: "./Qwen2.5-3B-Instruct-summary-dpo-adapter"
+  # Basic
+  do_train: True
+  bf16: True
+  max_steps: 300
+  #num_train_epochs: 3
+  per_device_train_batch_size: 4
+  per_device_eval_batch_size: 4
+  eval_strategy: "steps"
+  eval_steps: 50
+  logging_strategy: "steps"
+  logging_steps: 10
+  save_strategy: "steps"
+  save_steps: 50
+  # DPO
+  loss_type: "sigmoid"
+  beta: 0.3
+  label_smoothing: 0.1
+  learning_rate: 5e-6
+  lr_scheduler_type: "cosine"
+  warmup_ratio: 0.1
+  max_length: 4000
+  gradient_checkpointing: True
+  gradient_checkpointing_kwargs: 
+    use_reentrant: true
+  label_names:
+    - "labels"
+  fsdp: "full_shard"
+
+seed: 1234

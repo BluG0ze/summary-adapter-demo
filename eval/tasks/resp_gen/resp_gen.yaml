@@ -1,0 +1,41 @@
+task: resp_gen
+
+dataset_path: csebuetnlp/xlsum
+dataset_name: english
+#dataset_name: chinese_traditional
+#dataset_name: japanese
+#dataset_name: korean
+
+test_split: test
+
+description: "You are an expert in summarization tasks. You are good at summarizing long texts into concise and accurate summarizations. The text you summarize needs to meet the following three requirements:\n1. Your summarization must be concise and accurately express the meaning of the original text\n2. The language of the summarization must be consistent with the original text\n3. You only need to output the summary, without various polite words and other useless words\n\n"
+doc_to_text: "Summarize the following text: \n{{ text }}"
+doc_to_target: "{{ summary }}"
+target_delimiter: "\n"
+
+output_type: generate_until
+
+process_results: !function resp_gen.process_results
+
+metric_list:
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+
+filter_list:
+  - name: whitespaces
+    filter:
+      - function: remove_whitespace
+      - function: take_first
+
+generation_kwargs:
+  until:
+    - "</s>"
+    - "<|endoftext|>"
+  temperature: 0.7
+  top_p: 0.9
+  max_gen_toks: 512
+  do_sample: True
+
+metadata:
+  version: 1.0
